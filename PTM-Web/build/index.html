@@ -1,0 +1,134 @@
+<html>
+<head>
+<link rel="stylesheet" href="index.css">
+<script src="PTM.js"></script>
+</head>
+<body>
+<div id="display"></div>
+<script type="text/ptml">
+
+#================================================
+	main:
+#================================================
+SCREEN 256,192,2,4,4
+
+PAL 2,&hff0000
+PAL 3,&h00ff00
+PAL 4,&h0000ff
+PAL 5,&hffff00
+PAL 6,&hff00ff
+
+GOTO test05
+EXIT
+
+#================================================
+	test05:
+#================================================
+VAR cycles,0
+VAR bgcol,0
+
+loop_test05:
+	WCOL bgcol
+	LOCATE 1,1
+	PRINT "Cycles: {%cycles}"
+	VSYNC
+	INC bgcol
+	INC cycles
+	IF.GT bgcol,6
+		VAR bgcol,0
+	ENDIF
+	GOTO loop_test05
+	
+#================================================
+	test04:
+#================================================
+VAR cycles,0
+loop_test04:
+	LOCATE 1,1
+	PRINT cycles
+	LOCATE 1,2
+	CYCLES cycle_ctr
+	PRINT cycle_ctr
+	VSYNC
+	INC cycles
+	GOTO loop_test04
+
+#================================================
+	test03:
+#================================================
+VAR x,0
+VAR y,0
+loop_test03:
+	CLS
+	PRINTL "X: {%x}"
+	PRINTL "Y: {%y}"
+	VSYNC
+	INKEY key	
+	IF.EQ key,"RIGHT"
+		INC x
+	ENDIF
+	IF.EQ key,"LEFT"
+		DEC x
+	ENDIF
+	IF.EQ key,"DOWN"
+		INC y
+	ENDIF
+	IF.EQ key,"UP"
+		DEC y
+	ENDIF
+	GOTO loop_test03
+
+#================================================
+	test02:
+#================================================
+VAR y,0
+loop_test02:
+	INKEY key
+	IF.NEQ key,"NONE"
+		IF.EQ key,"ESC"
+			PRINTL "Exited."
+			EXIT
+		ENDIF
+		IF.GT y,23
+			VAR y,0
+			CLS
+		ENDIF
+		PRINTL key
+		VSYNC
+		INC y
+	ENDIF
+	GOTO loop_test02
+	
+#================================================
+	test01:
+#================================================
+VAR name,"Fernando"
+ARR.NEW arr
+ARR.PUSH arr,"First"
+ARR.PUSH arr,"Second"
+
+LOCATE 1,1
+VAR ix,0
+
+PRINTL "Hello World!{lf}{f2}Red{/f},{f3}{%arr[ix]}{/f},{f4}{%arr[ix]}{/f}."
+INC ix
+PRINTL "Hello World!{lf}{f2}Red{/f},{f3}{%arr[ix]}{/f},{f4}{%arr[ix]}{/f}."
+PRINTL
+PRINTL "Hello World again!{lf}{f5}{b2}Red{/b},{b3}Green{/b},{b4}Blue{/b}."
+PRINTL
+PRINTL "Hello World, char literal: {f6}{c64}{/f}"
+
+LOCATE 10,15
+PRINT "Hello World!"
+LOCATE 10,15
+COLOR 0,1
+PRINT.ADD "Hello World!"
+
+EXIT
+
+#================================================
+
+</script>
+</body>
+</html>
+ 
