@@ -10,22 +10,144 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 		<title>Clock</title>
 		<style type="text/css">
+
 			/* Customizable font and colors */
 			html {
 				background: #000000;
 				font-family: sans-serif;
 				font-weight: bold;
-				color: #181818;
 			}
+
+			#clocktext {
+				text-shadow: 3px 3px 1px #000000, -3px -3px 10px #000000;
+				padding-bottom: 130px;
+			}
+
+			#dateDisplay {
+				text-shadow: 2px 2px 1px #000000;
+			}
+
+			#dateDisplay {
+				color: #222;
+				position: fixed;
+				bottom: 100px;
+				padding: 0;
+				font-size: 64px;
+				text-align: center;
+			}
+
+			#toggleButton {
+				color: #111;
+				position: fixed;
+				bottom: 10px;
+				left: 10px;
+				padding: 0;
+				text-decoration: none;
+				border-radius: 5px;
+				font-size: 14px;
+				text-align: center;
+			}
+
 		</style>
 	</head>
 	
 	<body style="display:flex; height:100%; margin:0; padding:0; justify-content:center; align-items:center">
-		<span id="clocktext" style="font-kerning:none"></span>
 		
+		<span id="clocktext" style="font-kerning:none"></span>
+		<span id="dateDisplay" style="font-kerning:none"></span>
+
+		<a href="#" id="toggleButton">Animation on/off</a>
+
 		<script>
 			"use strict";
 			
+			// Array of HTML colors to interpolate through
+			const colors = [
+				"#000000", // Black
+				"#ff0000", // Red
+				"#ff7f00", // Orange
+				"#ffff00", // Yellow
+				"#7fff00", // Yellow-green
+				"#00ff00", // Green
+				"#00ff7f", // Spring green
+				"#00ffff", // Cyan
+				"#007fff", // Azure
+				"#0000ff", // Blue
+				"#7f00ff", // Violet
+				"#ff00ff", // Magenta
+				"#ff007f", // Rose
+				"#ffffff", // White
+			];
+
+			// Function to parse a hex color into RGB components
+			function hexToRgb(hex) {
+				const bigint = parseInt(hex.slice(1), 16);
+				return [(bigint >> 16) & 255, (bigint >> 8) & 255, bigint & 255];
+			}
+
+			// Function to interpolate between two RGB colors
+			function interpolateColor(color1, color2, t) {
+				return [
+					Math.round(color1[0] + (color2[0] - color1[0]) * t),
+					Math.round(color1[1] + (color2[1] - color1[1]) * t),
+					Math.round(color1[2] + (color2[2] - color1[2]) * t),
+				];
+			}
+
+			// Function to convert an RGB color back to a hex string
+			function rgbToHex(rgb) {
+				return `#${rgb.map(x => x.toString(16).padStart(2, "0")).join("")}`;
+			}
+			
+			// Initialize variables for the animation
+			let animationEnabled = false;
+			let currentIndex = 0;
+			let progress = 0; // Interpolation progress between colors
+			const duration = 100; // Duration for each transition (ms)
+			const step = 1000 / 60; // Approximate frame time (ms)
+
+			// Start the animation loop
+			function animate() {
+
+				if (animationEnabled) {
+					document.getElementById("clocktext").style.color = "#fff";
+					document.getElementById("dateDisplay").style.color = "#fff";
+
+					// Get the current and next color indices
+					const currentColor = hexToRgb(colors[currentIndex]);
+					const nextColor = hexToRgb(colors[(currentIndex + 1) % colors.length]);
+
+					// Interpolate between the two colors
+					const interpolatedColor = interpolateColor(currentColor, nextColor, progress);
+
+					// Update the document background color
+					document.body.style.backgroundColor = rgbToHex(interpolatedColor);
+
+					// Update progress and check if we should move to the next color
+					progress += step / duration;
+					if (progress >= 1) {
+						progress = 0;
+						currentIndex = (currentIndex + 1) % colors.length;
+					}
+				}
+				else {
+					document.body.style.backgroundColor = "#000000";
+					document.getElementById("clocktext").style.color = "#222";
+					document.getElementById("dateDisplay").style.color = "#222";
+				}
+				
+				// Request the next frame
+				requestAnimationFrame(animate);
+			}
+
+			// Display the current date
+			function displayDate() {
+				const dateDisplay = document.getElementById("dateDisplay");
+				const now = new Date();
+				const options = { weekday: 'long', month: 'long', day: 'numeric' };
+				dateDisplay.textContent = now.toLocaleDateString('en-US', options);
+			}
+
 			let textElem = document.getElementById("clocktext");
 			const targetWidth = 0.9;  // Proportion of full screen width
 			let curFontSize = 20;  // Do not change
@@ -49,6 +171,17 @@
 			updateClock();
 			updateTextSize();
 			window.addEventListener("resize", updateTextSize);
+
+			// Add click event to toggle the animation
+			const toggleButton = document.getElementById("toggleButton");
+			toggleButton.addEventListener("click", (event) => {
+				event.preventDefault(); // Prevent the default anchor behavior
+				animationEnabled = !animationEnabled;
+			});
+
+			animate();
+			displayDate();
+
 		</script>
 	</body>
 </html>
