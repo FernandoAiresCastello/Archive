@@ -1,0 +1,44 @@
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+main {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  //height: 100vw;
+  //width: 90vh;
+  //transform-origin: 0 0;
+  //transform: rotate(-90deg) translateX(-100%);
+}
+
+section {
+  position: fixed; 
+  left: 10px;
+  bottom: 10px;
+}
+
+button {
+  margin: 10px;
+  padding: 10px;
+}
+
+div {
+  /*box-sizing: border-box;*/
+  flex: 1 1 100%;
+  padding: 10px;
+  font-family: sans-serif;
+  color: #fff;
+  text-transform: uppercase;
+  font-size: 12px;
+  text-shadow: rgba(0,0,0,0.4) 0 3px 10px;
+}
+
+.clear {
+  flex: 1 1 100%;
+  color: #000;
+  font-size: 14px;
+  box-shadow: none;
+  height: auto;
+}
